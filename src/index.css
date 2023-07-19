@@ -3,13 +3,26 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --black: #374151;
+  --white: #ffffff;
+  --blur: rgba(255, 255, 255, 0.9);
+  --purple-light: #c7d1f4;
+  --purple-dark: #7786d2;
+  --purple-darker: #5f6baa;
+  --gray: #e5e7eb;
+  --gray-dark: #e5e7eb;
+  --red: #ff0000;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
   line-height: 1rem;
+  font-size: 0.75rem;
   font-weight: 500;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--white);
+  background-color: var(--black);
+  background-image: url('assets/images/mozio-bg.png');
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,43 +39,67 @@ body {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+::selection {
+  background: var(--gray);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: var(--black);
+    background-color: var(--white);
   }
+}
 
-  a:hover {
-    color: #747bff;
-  }
+/* styles for react-datepicker */
 
-  button {
-    background-color: #f9f9f9;
-  }
+.react-datepicker__input-container input {
+  @apply relative h-[32px] w-[96px] gap-5 rounded-md border bg-transparent px-2 text-center tracking-wider focus-visible:outline-none;
+}
+
+.react-datepicker__header {
+  @apply flex w-full flex-col items-center gap-4 border-0 bg-transparent;
+}
+
+.react-datepicker__month-container {
+  @apply w-full px-1 py-3;
+}
+
+.react-datepicker__week,
+.react-datepicker__day-names {
+  @apply flex h-[20px] w-full items-center justify-center gap-2;
+}
+
+.react-datepicker__day--selected {
+  @apply bg-purple-light text-black !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  @apply border-0 bg-transparent !important;
+}
+
+.react-datepicker__day,
+.react-datepicker__day-name {
+  @apply flex h-[22px] w-[22px] items-center justify-center rounded-[50%] border-0 bg-transparent text-[14px] leading-5;
+}
+
+.react-datepicker__day {
+  @apply font-normal transition-all duration-300 hover:rounded-[50%] hover:bg-purple-light focus-visible:outline-purple-light;
+}
+
+.react-datepicker__day--disabled {
+  @apply hover:bg-transparent focus-visible:outline-none;
+}
+
+.react-datepicker__day-name {
+  @apply font-bold text-purple-darker;
+}
+
+.react-datepicker__month {
+  @apply m-0;
 }
