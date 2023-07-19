@@ -12,7 +12,7 @@ import { Button } from '@/components/buttons/Button';
 import { IconButton } from '@/components/buttons/IconButton';
 import { CustomDatePicker } from '@/components/date-picker/CustomDatePicker';
 import { useQueryParam } from '@/hooks/useQueryParams';
-import { travelAPI } from '@/components/api/TravelApi';
+import { travelAPI } from '@/api/TravelAPI';
 
 interface IDestinationInput {
   id: string;

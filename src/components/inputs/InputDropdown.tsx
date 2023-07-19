@@ -5,12 +5,10 @@ import {
 } from '@radix-ui/react-icons';
 import * as Popover from '@radix-ui/react-popover';
 
-type IItem = string;
-
 interface IInputDropdownProps {
   id: string;
   initialValue?: string;
-  onSearch: (value: string) => Promise<string[] | []>;
+  onSearch: (value: string) => Promise<string[]>;
   onSelect: (value: string) => void;
   onClear?: () => string;
   onError?: () => void;
@@ -27,7 +25,7 @@ export const InputDropdown = ({
   const [search, setSearch] = useState<string>('');
   const [selected, setSelected] = useState<string>('');
   const [filteredItems, setFilteredItems] = useState<
-    IItem[] | []
+    string[]
   >([]);
   const [error, setError] = useState<string>('');
   const [empty, setEmpty] = useState<boolean>(false);

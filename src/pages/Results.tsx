@@ -13,8 +13,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/buttons/Button';
 import GoogleMapsPNG from '@/assets/images/google-maps.png';
 import { useQueryParam } from '@/hooks/useQueryParams';
-import { travelAPI } from '@/components/api/TravelApi';
 import { ICityDistance } from '@/types/city';
+import { travelAPI } from '@/api/TravelAPI';
 
 interface IResultsRoadStopProps {
   cityOne: string;
@@ -186,9 +186,9 @@ export default function Results() {
 
   const { searchParams } = useQueryParam();
 
-  const getCitiesFromParams = () => {
-    const origin = searchParams.get('origin');
-    const end = searchParams.get('end');
+  const getCitiesFromParams = (): string[] => {
+    const origin = searchParams.get('origin')!;
+    const end = searchParams.get('end')!;
     const intermediates = [];
     const intermediatesCount = (
       searchParams
@@ -197,7 +197,7 @@ export default function Results() {
     ).length;
     for (let i = 1; i <= intermediatesCount; i++) {
       intermediates.push(
-        searchParams.get(`intermediate-${i}`)
+        searchParams.get(`intermediate-${i}`)!
       );
     }
     return [origin, ...intermediates, end];

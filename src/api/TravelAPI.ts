@@ -18,9 +18,7 @@ class TravelAPI {
     };
   }
 
-  getCitiesBySearchValue(
-    value: string
-  ): Promise<(string | number)[]> {
+  getCitiesBySearchValue(value: string): Promise<string[]> {
     const cities: CityAPI[] = citiesJson;
     const filteredCities = cities.filter((city) => {
       const cityName = city[0] as string;
@@ -30,7 +28,7 @@ class TravelAPI {
     });
     return Promise.resolve(
       filteredCities.length
-        ? filteredCities.map((city) => city[0])
+        ? filteredCities.map((city) => city[0] as string)
         : []
     );
   }
