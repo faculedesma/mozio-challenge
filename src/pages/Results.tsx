@@ -242,7 +242,7 @@ export default function Results() {
             />
             <Link
               to={{
-                pathname: '/mozio-challenge/home',
+                pathname: '/home',
                 search: searchParams.toString()
               }}
             >

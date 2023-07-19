@@ -23,7 +23,7 @@ export default function Error({
           <div className="flex flex-col gap-4">
             <Link
               to={{
-                pathname: '/mozio-challenge/home',
+                pathname: '/home',
                 search: searchParams.toString()
               }}
             >

@@ -347,7 +347,7 @@ export default function Home() {
       </div>
       <Link
         to={{
-          pathname: '/mozio-challenge/results',
+          pathname: '/results',
           search: searchParams.toString()
         }}
       >
