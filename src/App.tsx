@@ -11,18 +11,14 @@ import Results from '@/pages/Results';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/home" replace />
+    element: <Navigate to="/mozio-challenge/home" replace />
   },
   {
-    path: '/mozio-challenge',
-    element: <Navigate to="/home" replace />
-  },
-  {
-    path: '/home',
+    path: '/mozio-challenge/home',
     element: <Home />
   },
   {
-    path: '/results',
+    path: '/mozio-challenge/results',
     element: <Results />
   }
 ]);
