@@ -1,17 +1,17 @@
 import { MozioLogo } from './assets/svgs/MozioLogo';
 
 import {
-  createBrowserRouter,
+  createHashRouter,
   Navigate,
   RouterProvider
 } from 'react-router-dom';
 import Home from '@/pages/Home';
 import Results from '@/pages/Results';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
-    element: <Navigate to="/mozio-challenge" />
+    element: <Navigate to="/home" />
   },
   {
     path: '/mozio-challenge',
