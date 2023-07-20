@@ -78,7 +78,7 @@ const DestinationInput = ({
     if (value.length === 0) {
       return 'You must choose a city';
     }
-    if (value === 'fail') {
+    if (value.toLowerCase() === 'fail') {
       return 'Oops! Failed to search with this keyword.';
     }
     return '';
