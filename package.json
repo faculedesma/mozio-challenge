@@ -1,6 +1,6 @@
 {
   "name": "mozio-challenge",
-  "homepage": "https://faculedesma.github.io/mozio-challenge",
+  "homepage": ".",
   "private": true,
   "version": "0.0.0",
   "type": "module",
