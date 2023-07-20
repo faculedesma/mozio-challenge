@@ -81,7 +81,7 @@ const DestinationInput = ({
     if (value === 'fail') {
       return 'Oops! Failed to search with this keyword.';
     }
-    return 'Internal server error. Please try again.';
+    return '';
   };
 
   return (
