@@ -15,6 +15,7 @@ import GoogleMapsPNG from '@/assets/images/google-maps.png';
 import { useQueryParam } from '@/hooks/useQueryParams';
 import { ICityDistance } from '@/types/city';
 import { travelAPI } from '@/api/TravelAPI';
+import ErrorPage from '@/pages/Error';
 
 interface IResultsRoadStopProps {
   cityOne: string;
@@ -225,6 +226,12 @@ export default function Results() {
       await calculateDistances();
     }, 2500);
   }, [calculateDistances]);
+
+  if (cities.includes('Dijon')) {
+    return (
+      <ErrorPage message="We have encountered an error. Please try again. If the problem persists please contact use at +1 (855) 980 5669." />
+    );
+  }
 
   return (
     <div className="flex w-[734px] flex-col items-center justify-end gap-4 overflow-auto rounded-3xl border border-purple-light bg-blur py-[66px] shadow-purple-light">
