@@ -10,7 +10,7 @@ import Results from '@/pages/Results';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/mozio-challenge',
     element: <Navigate to="/home" replace />
   },
   {
