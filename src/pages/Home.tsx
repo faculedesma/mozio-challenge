@@ -74,6 +74,15 @@ const DestinationInput = ({
   const handleSelectCity = (city: string) =>
     updateQueryParam(destination.id, city);
 
+  const handleInputError = (value: string) => {
+    if (value.length === 0) {
+      return 'You must choose a city';
+    }
+    if (value === 'fail') {
+      return 'Oops! Failed to search with this keyword.';
+    }
+  };
+
   return (
     <div className="relative flex h-[60px] items-start gap-8">
       {isLastDestination ? (
@@ -103,6 +112,7 @@ const DestinationInput = ({
             onSearch={handleSearchCities}
             onSelect={handleSelectCity}
             onClear={handleClearCity}
+            onError={handleInputError}
           />
           {destination.removable ? (
             <div

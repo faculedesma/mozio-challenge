@@ -11,7 +11,7 @@ interface IInputDropdownProps {
   onSearch: (value: string) => Promise<string[]>;
   onSelect: (value: string) => void;
   onClear?: () => string;
-  onError?: () => void;
+  onError?: (value: string) => string;
 }
 
 export const InputDropdown = ({
@@ -69,7 +69,7 @@ export const InputDropdown = ({
   }, [initialValue]);
 
   useEffect(() => {
-    if (search.length > 0 && !selected) {
+    if (search.length > 0 && !selected && !error) {
       const debounceTimer = setTimeout(async () => {
         await handleSearch(search);
       }, 500);
@@ -77,7 +77,7 @@ export const InputDropdown = ({
         clearTimeout(debounceTimer);
       };
     }
-  }, [search, selected, handleSearch]);
+  }, [search, selected, handleSearch, error]);
 
   const handleInputChange = (value: string) => {
     setError('');
@@ -85,12 +85,11 @@ export const InputDropdown = ({
     setEmpty(false);
     setSearch(value);
 
-    if (value.length === 0) {
-      setError('You must choose a city');
-      if (onError) {
-        onError();
-      }
-      return;
+    if (onError) {
+      const message = onError(value);
+      setIsOpen(false);
+      setEmpty(false);
+      setError(message);
     }
   };
 
