@@ -168,6 +168,7 @@ export const InputDropdown = ({
         <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
           <input
             id={id}
+            type="text"
             ref={inputRef}
             value={search}
             onChange={(e) =>
