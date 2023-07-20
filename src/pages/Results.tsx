@@ -36,12 +36,12 @@ interface IResultRoadProps {
 
 const Loading = () => {
   return (
-    <div className="flex gap-10">
-      <div className="h-[300px] w-[300px] animate-pulse rounded-lg border border-purple-light bg-purple-light"></div>
+    <div className="flex flex-col gap-10 md:flex-row">
+      <div className="h-[200px] w-[300px] animate-pulse rounded-lg border border-purple-light bg-purple-light md:h-[300px]"></div>
       <div className="flex flex-col gap-4">
-        <div className="h-[150px] w-[300px] animate-pulse rounded-md bg-purple-light"></div>
-        <div className="h-[88px] w-[300px] animate-pulse rounded-md bg-purple-light"></div>
-        <div className="h-[38px] w-[300px] animate-pulse rounded-md bg-purple-light"></div>
+        <div className="h-[100px] w-[300px] animate-pulse rounded-md bg-purple-light md:h-[150px]"></div>
+        <div className="h-[50px] w-[300px] animate-pulse rounded-md bg-purple-light md:h-[88px]"></div>
+        <div className="h-[50px] w-[300px] animate-pulse rounded-md bg-purple-light md:h-[38px]"></div>
       </div>
     </div>
   );
@@ -234,11 +234,11 @@ export default function Results() {
   }
 
   return (
-    <div className="flex w-[734px] flex-col items-center justify-end gap-4 overflow-auto rounded-3xl border border-purple-light bg-blur py-[66px] shadow-purple-light">
+    <div className="flex w-[380px] flex-col items-center justify-end gap-4 rounded-3xl border border-purple-light bg-blur px-[22px] py-[30px] shadow-purple-light md:w-[734px] md:py-[66px]">
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="flex items-center gap-12">
+        <div className="flex flex-col items-center gap-12 md:flex-row">
           <ResultsMap />
           <div className="flex flex-col items-center justify-center gap-8">
             <ResultsRoad distances={distances} />

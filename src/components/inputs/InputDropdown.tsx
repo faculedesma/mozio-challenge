@@ -154,7 +154,7 @@ export const InputDropdown = ({
 
   return (
     <div className="relative flex flex-col items-start justify-start gap-1">
-      <div className="relative flex h-[32px] w-[324px]">
+      <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
         <input
           id={id}
           value={search}
@@ -162,7 +162,7 @@ export const InputDropdown = ({
             handleInputChange(e.target.value)
           }
           autoComplete="off"
-          className={`w-full bg-transparent ${
+          className={`dbg-transparent w-full ${
             error && 'text-red'
           } & relative flex h-full items-center gap-5 border focus-visible:outline-none ${
             !error ? 'border-gray' : 'border-red'
@@ -183,7 +183,7 @@ export const InputDropdown = ({
           onEscapeKeyDown={handleClose}
           onPointerDownOutside={handleClose}
           onInteractOutside={handleClose}
-          className="absolute left-0 top-2 z-10 flex max-h-[180px] w-[324px] flex-col gap-1 rounded-lg border border-purple-light bg-white p-2 shadow-purple-light focus-visible:outline-none"
+          className="absolute left-0 top-2 z-10 flex max-h-[180px] w-[236px] flex-col gap-1 rounded-lg border border-purple-light bg-white p-2 shadow-purple-light focus-visible:outline-none md:w-[324px]"
         >
           <TriangleUpIcon className="absolute -top-3 left-2 text-purple-dark" />
           <div className="h-full overflow-scroll">

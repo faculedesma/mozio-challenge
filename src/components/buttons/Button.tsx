@@ -13,7 +13,7 @@ export const Button = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="flex h-[38px] items-center justify-center rounded bg-purple-dark  px-[12px] py-[8px] text-white transition-all duration-300 hover:bg-purple-darker disabled:bg-gray-light"
+      className="flex h-[38px] w-[335px] items-center justify-center rounded bg-purple-dark  px-[12px] py-[8px] text-white transition-all duration-300 hover:bg-purple-darker disabled:bg-gray-light md:w-auto"
     >
       {label}
     </button>

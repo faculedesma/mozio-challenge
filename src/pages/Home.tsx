@@ -329,9 +329,9 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex h-[450px] w-[734px] flex-col items-center justify-center gap-4 rounded-3xl border border-purple-light bg-blur px-[86px] py-[66px] shadow-purple-lg">
-      <div className="flex w-full items-start justify-between">
-        <div className="flex h-full flex-col gap-4 overflow-scroll">
+    <div className="relative flex w-[380px] flex-col items-center gap-4 rounded-3xl border border-purple-light bg-blur px-[22px] py-[30px] shadow-purple-lg md:w-[734px] md:px-[86px] md:py-[66px]">
+      <div className="flex w-full flex-col items-start justify-between gap-8 md:flex-row md:gap-0">
+        <div className="flex max-h-full flex-col gap-4 self-center">
           <Destinations
             destinations={destinations}
             onRemoveDestination={handleRemoveDestination}
@@ -348,7 +348,7 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <div className="flex flex-col items-start gap-5">
+        <div className="relative left-[10px] flex w-[236px] justify-between gap-5 self-center md:w-auto md:flex-col md:items-start">
           <Passengers />
           <CustomDatePicker
             initialDate={tripDate}
