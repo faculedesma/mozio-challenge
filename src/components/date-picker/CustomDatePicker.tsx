@@ -8,7 +8,7 @@ import {
 } from '@radix-ui/react-icons';
 
 import 'react-datepicker/dist/react-datepicker.css';
-
+import { getMonth, getYear } from 'date-fns';
 interface ICustomDatePickerProps {
   initialDate?: string;
   onSelectDate: (date: Date | null) => void;
@@ -29,7 +29,9 @@ const addYears = (date: Date, years: number) => {
   return date;
 };
 
-const years = ['2023', '2024'];
+const years = new Array(2)
+  .fill(null)
+  .map((_, i) => 2023 + i);
 
 const months = [
   'JAN',
@@ -83,7 +85,7 @@ const CustomHeader = ({
       <div className="flex items-center gap-1">
         <div className="relative flex gap-1">
           <select
-            value={months[date.getMonth()]}
+            value={months[getMonth(date)]}
             onChange={({ target: { value } }) => {
               changeMonth(months.indexOf(value));
             }}
@@ -101,9 +103,9 @@ const CustomHeader = ({
         </div>
         <div className="relative flex gap-1">
           <select
-            value={date.getFullYear()}
+            value={getYear(date)}
             onChange={({ target: { value } }) => {
-              changeYear(years.indexOf(value));
+              changeYear(parseInt(value));
             }}
             className="flex h-[22px] w-[54px] cursor-pointer appearance-none items-center justify-center gap-0 rounded border border-purple-light bg-purple-light px-1 text-[14px] font-medium uppercase transition-all duration-300 hover:border-purple-dark focus-visible:border-purple-dark"
           >
@@ -167,6 +169,7 @@ export const CustomDatePicker = ({
         maxDate={addYears(new Date(), 1)}
         calendarContainer={CustomContainer}
         renderCustomHeader={CustomHeader}
+        fixedHeight
         className={`${isError ? 'border border-red' : ''}`}
       />
       {isError ? (
