@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import {
   Cross1Icon,
   TriangleUpIcon
@@ -33,14 +38,10 @@ export const InputDropdown = ({
   const [isLoading, setIsLoading] =
     useState<boolean>(false);
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const handleSearch = useCallback(
     async (searchValue: string) => {
-      setIsLoading(true);
-      setSelected('');
-      setIsOpen(true);
-      setError('');
-      setEmpty(false);
-
       try {
         const items = await onSearch(searchValue);
         if (!items.length) {
@@ -80,16 +81,20 @@ export const InputDropdown = ({
   }, [search, selected, handleSearch, error]);
 
   const handleInputChange = (value: string) => {
+    setSearch(value);
     setError('');
     setSelected('');
     setEmpty(false);
-    setSearch(value);
+    setIsLoading(true);
+    setIsOpen(true);
 
     if (onError) {
       const message = onError(value);
-      setIsOpen(false);
-      setEmpty(false);
-      setError(message);
+      if (message) {
+        setIsOpen(false);
+        setEmpty(false);
+        setError(message);
+      }
     }
   };
 
@@ -119,13 +124,13 @@ export const InputDropdown = ({
 
   const getDropdownContent = () => {
     if (isLoading) {
-      return Array(7)
+      return Array(5)
         .fill({})
         .map((_, index) => {
           return (
             <div
               key={index}
-              className="flex h-[28px] w-2/3 animate-pulse items-center justify-start rounded-md bg-gray-light"
+              className="mb-[4px] flex h-[28px] w-2/3 animate-pulse items-center justify-start rounded-md bg-gray-light"
             ></div>
           );
         });
@@ -152,33 +157,40 @@ export const InputDropdown = ({
     });
   };
 
+  const removeAutoFocusPopover = (event: Event) => {
+    event.preventDefault();
+    inputRef.current?.focus();
+  };
+
   return (
     <div className="relative flex flex-col items-start justify-start gap-1">
-      <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
-        <input
-          id={id}
-          value={search}
-          onChange={(e) =>
-            handleInputChange(e.target.value)
-          }
-          autoComplete="off"
-          className={`dbg-transparent w-full ${
-            error && 'text-red'
-          } & relative flex h-full items-center gap-5 border focus-visible:outline-none ${
-            !error ? 'border-gray' : 'border-red'
-          } rounded-md bg-transparent px-2`}
-        />
-        {!error && search ? (
-          <Cross1Icon
-            className="absolute right-3 top-3 cursor-pointer stroke-purple-dark transition-all duration-300 hover:scale-90"
-            onClick={handleClearInput}
-          />
-        ) : null}
-      </div>
-      {error ? <p className="text-red">{error}</p> : null}
       <Popover.Root open={isOpen}>
+        <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
+          <input
+            id={id}
+            ref={inputRef}
+            value={search}
+            onChange={(e) =>
+              handleInputChange(e.target.value)
+            }
+            autoComplete="off"
+            className={`dbg-transparent w-full ${
+              error && 'text-red'
+            } & relative flex h-full items-center gap-5 border focus-visible:outline-none ${
+              !error ? 'border-gray' : 'border-red'
+            } rounded-md bg-transparent px-2`}
+          />
+          {!error && search ? (
+            <Cross1Icon
+              className="absolute right-3 top-3 cursor-pointer stroke-purple-dark transition-all duration-300 hover:scale-90"
+              onClick={handleClearInput}
+            />
+          ) : null}
+        </div>
+        {error ? <p className="text-red">{error}</p> : null}
         <Popover.Trigger></Popover.Trigger>
         <Popover.Content
+          onOpenAutoFocus={removeAutoFocusPopover}
           onCloseAutoFocus={handleClose}
           onEscapeKeyDown={handleClose}
           onPointerDownOutside={handleClose}

@@ -157,6 +157,7 @@ const ResultsRoad = ({ distances }: IResultRoadProps) => {
       {distances.map((distance, index) => {
         return (
           <ResultsRoadStop
+            key={index}
             cityOne={distance.cityOne}
             cityTwo={distance.cityTwo}
             kilometers={distance.distance}
@@ -224,7 +225,7 @@ export default function Results() {
   useEffect(() => {
     setTimeout(async () => {
       await calculateDistances();
-    }, 2500);
+    }, 1500);
   }, [calculateDistances]);
 
   if (cities.includes('Dijon')) {
