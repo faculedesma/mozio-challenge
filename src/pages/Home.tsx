@@ -348,7 +348,7 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <div className="relative left-[10px] flex w-[236px] justify-between gap-5 self-center md:w-auto md:flex-col md:items-start">
+        <div className="relative left-[10px] flex w-[236px] justify-between gap-5 self-center md:left-0 md:w-auto md:flex-col md:items-start md:self-start">
           <Passengers />
           <CustomDatePicker
             initialDate={tripDate}
