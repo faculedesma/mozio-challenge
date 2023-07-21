@@ -13,43 +13,63 @@ import { IconButton } from '@/components/buttons/IconButton';
 import { CustomDatePicker } from '@/components/date-picker/CustomDatePicker';
 import { useQueryParam } from '@/hooks/useQueryParams';
 import { travelAPI } from '@/api/TravelAPI';
+import {
+  useForm,
+  useController,
+  Control,
+  useFieldArray,
+  FieldErrors
+} from 'react-hook-form';
+import { Spinner } from '@/components/loaders/Spinner';
+import { IDestinationsFormValues } from '@/types/form';
+
+const defaultDestinations = [
+  {
+    value: ''
+  },
+  {
+    value: ''
+  }
+];
 
 interface IDestinationInput {
   id: string;
-  removable: boolean;
+  value: string;
 }
 
 interface IDestinationInputProps {
   destination: IDestinationInput;
-  handleRemoveDestination: (id: string) => void;
+  handleRemoveDestination: (id: number) => void;
+  index: number;
+  total: number;
+  control: Control<IDestinationsFormValues>;
+  error: string | undefined;
 }
 
 interface IDestinationsProps {
-  destinations: Array<IDestinationInput>;
-  onRemoveDestination: (id: string) => void;
+  destinations: IDestinationInput[];
+  control: Control<IDestinationsFormValues>;
+  onRemoveDestination: (id: number) => void;
+  errors: FieldErrors<IDestinationsFormValues>;
 }
 
 const DestinationInput = ({
   destination,
-  handleRemoveDestination
+  handleRemoveDestination,
+  index,
+  total,
+  control,
+  error
 }: IDestinationInputProps) => {
-  const [urlValue, setUrlValue] = useState<string>('');
-
-  const isOrigin = destination.id === 'origin';
-  const isLastDestination = destination.id === 'end';
+  const isOrigin = index === 0;
+  const isLastDestination = index === total - 1;
+  const isRemovable = !isOrigin && !isLastDestination;
 
   const {
-    getQueryParam,
-    removeQueryParam,
-    updateQueryParam
+    searchParams,
+    updateQueryParam,
+    removeQueryParam
   } = useQueryParam();
-
-  useEffect(() => {
-    const urlCitySelected = getQueryParam(destination.id);
-    if (urlCitySelected) {
-      setUrlValue(urlCitySelected);
-    }
-  }, [destination.id, getQueryParam]);
 
   const handleSearchCities = useCallback(
     async (value: string) => {
@@ -66,13 +86,44 @@ const DestinationInput = ({
     []
   );
 
-  const handleClearCity = () => {
-    removeQueryParam(destination.id);
+  const handleClearCity = (city: string) => {
+    const destinations = searchParams.get('destinations')!;
+    const updatedDestinations = destinations.split(',');
+    if (!updatedDestinations) {
+      removeQueryParam('destinations');
+    } else {
+      const indexToRemove =
+        updatedDestinations.indexOf(city);
+      if (indexToRemove !== -1) {
+        updatedDestinations.splice(index, 1);
+      }
+      updateQueryParam(
+        'destinations',
+        updatedDestinations.filter((d) => d !== city).join()
+      );
+    }
     return 'You must choose a city';
   };
 
-  const handleSelectCity = (city: string) =>
-    updateQueryParam(destination.id, city);
+  const handleSelectCity = (city: string) => {
+    let destinationQuery = '';
+    const destinations =
+      searchParams.get('destinations') || '';
+    if (!destinations) {
+      destinationQuery = city;
+    } else {
+      const updatedDestinations = destinations.split(',');
+      if (updatedDestinations.length < 2) {
+        updatedDestinations.push(city);
+      } else {
+        const indexToInsert =
+          updatedDestinations.length - 1;
+        updatedDestinations.splice(indexToInsert, 0, city);
+      }
+      destinationQuery = updatedDestinations.join();
+    }
+    updateQueryParam('destinations', destinationQuery);
+  };
 
   const handleInputError = (value: string) => {
     if (value.length === 0) {
@@ -81,7 +132,7 @@ const DestinationInput = ({
     if (value.toLowerCase() === 'fail') {
       return 'Oops! Failed to search with this keyword.';
     }
-    return '';
+    return true;
   };
 
   return (
@@ -109,17 +160,17 @@ const DestinationInput = ({
         <div className="flex items-center gap-4">
           <InputDropdown
             id={destination.id}
-            initialValue={urlValue}
+            index={index}
             onSearch={handleSearchCities}
             onSelect={handleSelectCity}
             onClear={handleClearCity}
-            onError={handleInputError}
+            control={control}
+            customValidation={handleInputError}
+            error={error}
           />
-          {destination.removable ? (
+          {isRemovable ? (
             <div
-              onClick={() =>
-                handleRemoveDestination(destination.id)
-              }
+              onClick={() => handleRemoveDestination(index)}
               className="flex h-4 w-4 -translate-y-[2px] cursor-pointer items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 hover:scale-90"
             >
               <Cross1Icon className="h-2 w-2 stroke-purple-dark" />
@@ -133,17 +184,26 @@ const DestinationInput = ({
 
 const Destinations = ({
   destinations,
-  onRemoveDestination
+  control,
+  onRemoveDestination,
+  errors
 }: IDestinationsProps) => {
+  console.log(errors);
   return (
     <div className="flex flex-col gap-5">
-      {destinations.map((destination) => {
+      {destinations.map((destination, index) => {
         return (
           <DestinationInput
             key={destination.id}
             destination={destination}
+            index={index}
+            total={destinations.length}
+            control={control}
             handleRemoveDestination={() =>
-              onRemoveDestination(destination.id)
+              onRemoveDestination(index)
+            }
+            error={
+              errors?.destinations?.[index]?.value?.message
             }
           />
         );
@@ -152,26 +212,30 @@ const Destinations = ({
   );
 };
 
-const Passengers = () => {
+const Passengers = ({
+  control
+}: {
+  control: Control<IDestinationsFormValues>;
+}) => {
+  const { field } = useController({
+    control,
+    name: 'passengers',
+    rules: { required: true }
+  });
+
   const [quantity, setQuantity] = useState<number>(1);
-  const [minusDisabled, setMinusDisabled] =
-    useState<boolean>(true);
-  const { getQueryParam, updateQueryParam } =
-    useQueryParam();
 
   useEffect(() => {
-    const urlPassengers = getQueryParam('passengers');
-    if (urlPassengers) {
-      setQuantity(parseInt(urlPassengers));
-      setMinusDisabled(parseInt(urlPassengers) === 1);
+    if (field.value) {
+      setQuantity(field.value);
     }
-  }, [getQueryParam]);
+  }, [field.value]);
+
+  const { updateQueryParam } = useQueryParam();
 
   const handleIncrement = () => {
     const updatedQunatity = quantity + 1;
-    if (updatedQunatity > 1) {
-      setMinusDisabled(false);
-    }
+    field.onChange(updatedQunatity);
     setQuantity(updatedQunatity);
     updateQueryParam(
       'passengers',
@@ -181,10 +245,7 @@ const Passengers = () => {
 
   const handleDecrement = () => {
     const updatedQunatity = quantity - 1;
-    if (quantity === 1) {
-      setMinusDisabled(true);
-      return;
-    }
+    field.onChange(updatedQunatity);
     setQuantity(updatedQunatity);
     updateQueryParam(
       'passengers',
@@ -197,19 +258,25 @@ const Passengers = () => {
       <label>Passengers</label>
       <div className="border-gray flex h-[32px] w-full items-center justify-center gap-2 rounded-lg border px-3 py-2">
         <IconButton
-          disabled={minusDisabled}
+          disabled={quantity === 1}
           onClick={handleDecrement}
         >
           <MinusIcon />
         </IconButton>
-        <input
-          type="number"
-          className="appearence-none w-[16px] bg-transparent text-center focus-within:outline-none"
-          value={quantity}
-          onChange={(e) =>
-            setQuantity(parseInt(e.target.value))
-          }
-        />
+        {quantity ? (
+          <input
+            type="number"
+            className="appearence-none w-[16px] bg-transparent text-center focus-within:outline-none"
+            ref={field.ref}
+            value={quantity}
+            onChange={(e) => {
+              field.onChange(e.target.value);
+              setQuantity(parseInt(e.target.value));
+            }}
+          />
+        ) : (
+          <Spinner />
+        )}
         <IconButton onClick={handleIncrement}>
           <PlusIcon />
         </IconButton>
@@ -219,105 +286,82 @@ const Passengers = () => {
 };
 
 export default function Home() {
-  const [destinations, setDestinations] = useState([
-    { id: 'origin', removable: false },
-    { id: 'end', removable: false }
-  ]);
-  const [tripDate, setTripdate] = useState('');
-  const [initialMount, setInitialMount] = useState(true);
+  const [initialValues, setInitialValues] =
+    useState<IDestinationsFormValues>();
+
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isValid }
+  } = useForm<IDestinationsFormValues>({
+    defaultValues: initialValues,
+    mode: 'onChange'
+  });
+
+  const { fields, insert, remove } = useFieldArray({
+    control,
+    name: 'destinations'
+  });
 
   const {
     searchParams,
-    getQueryParam,
     removeQueryParam,
     updateQueryParam
   } = useQueryParam();
 
-  const addCurrentIntermediates = useCallback(
-    (count: number) => {
-      const currentIntermediates = [];
-      for (let i = 1; i <= count; i++) {
-        const existingIntermediate = {
-          id: `intermediate-${i}`,
-          removable: true
-        };
-        currentIntermediates.push(existingIntermediate);
+  useEffect(() => {
+    const getDefaultFormValues = () => {
+      let currentDestinations;
+      const passengers = searchParams.get('passengers')
+        ? parseInt(searchParams.get('passengers')!)
+        : 1;
+      const date = searchParams.get('date') || new Date();
+      const destinations = searchParams
+        .get('destinations')
+        ?.split(',');
+      if (destinations) {
+        if (destinations.length > 1) {
+          currentDestinations = destinations.map(
+            (destination) => ({ value: destination })
+          );
+        } else {
+          currentDestinations = [
+            { value: destinations[0] },
+            { value: '' }
+          ];
+        }
       }
-      const updatedDestinations = [
-        destinations[0],
-        ...currentIntermediates,
-        ...destinations.slice(1)
-      ];
-      setDestinations(updatedDestinations);
-    },
-    [destinations]
-  );
+      return {
+        passengers,
+        date: date.toString(),
+        destinations:
+          currentDestinations || defaultDestinations
+      };
+    };
 
-  useEffect(() => {
-    if (searchParams.toString() && initialMount) {
-      const intermediates =
-        searchParams
-          .toString()
-          .match(new RegExp('intermediate', 'gi')) || [];
-      addCurrentIntermediates(intermediates.length);
-      setInitialMount(false);
+    if (!initialValues) {
+      const formValues = getDefaultFormValues();
+      setInitialValues(formValues);
+      reset(formValues);
     }
-  }, [searchParams, initialMount, addCurrentIntermediates]);
-
-  useEffect(() => {
-    const queryDate = getQueryParam('date');
-    if (queryDate) {
-      setTripdate(queryDate);
-    }
-  }, [
-    searchParams,
-    initialMount,
-    addCurrentIntermediates,
-    getQueryParam
-  ]);
+  }, [reset, searchParams, initialValues]);
 
   const handleAddDestination = () => {
-    const destinationIndex = destinations.length - 1;
-    const newDestination = {
-      id: `intermediate-${destinationIndex}`,
-      removable: true
-    };
-    const intermediateDestinations = destinations.filter(
-      (destination) =>
-        destination.id !== 'origin' &&
-        destination.id !== 'end'
-    );
-    const updatedDestinations = [
-      destinations[0],
-      ...intermediateDestinations,
-      newDestination,
-      destinations[destinations.length - 1]
-    ];
-    setDestinations(updatedDestinations);
+    insert(fields.length - 1, { value: '' });
   };
 
-  const handleRemoveDestination = (id: string) => {
-    const order = id.split('-')[1];
-    const updatedDestinations = destinations.filter(
-      (destination) => destination.id !== id
+  const handleRemoveDestination = (index: number) => {
+    remove(index);
+    const destinations =
+      searchParams.get('destinations') || '';
+    const updatedDestinations = destinations
+      .split(',')
+      .filter((_, i) => i !== index);
+    updateQueryParam(
+      'destinations',
+      updatedDestinations.join()
     );
-    const currentDestinationKey = id;
-    const nextDestinationKey = `intermediate-${
-      parseInt(order) + 1
-    }`;
-    const nextDestinationValue = searchParams.get(
-      nextDestinationKey
-    );
-    if (nextDestinationValue) {
-      updateQueryParam(
-        currentDestinationKey,
-        nextDestinationValue
-      );
-      removeQueryParam(nextDestinationKey);
-    } else {
-      removeQueryParam(id);
-    }
-    setDestinations(updatedDestinations);
   };
 
   const handleSelectDate = (date: Date | null) => {
@@ -330,40 +374,54 @@ export default function Home() {
 
   return (
     <div className="relative flex w-[380px] flex-col items-center gap-4 rounded-3xl border border-purple-light bg-blur px-[22px] py-[30px] shadow-purple-lg md:w-[734px] md:px-[86px] md:py-[66px]">
-      <div className="flex w-full flex-col items-start justify-between gap-8 md:flex-row md:gap-0">
-        <div className="flex max-h-full flex-col gap-4 self-center">
-          <Destinations
-            destinations={destinations}
-            onRemoveDestination={handleRemoveDestination}
-          />
-          <div
-            onClick={handleAddDestination}
-            className="group relative left-[48px] flex w-36 cursor-pointer items-center justify-between gap-1"
-          >
-            <div className=" flex h-4 w-4 items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 group-hover:scale-110">
-              <PlusIcon className="stroke-purple-dark" />
+      <form
+        id="destinations-form"
+        onSubmit={handleSubmit(() => null)}
+        className="flex w-full flex-col items-center justify-center gap-8"
+      >
+        <div className="flex w-full flex-col items-start justify-between gap-8 md:flex-row md:gap-0">
+          <div className="flex max-h-full flex-col gap-4 self-center">
+            <Destinations
+              destinations={fields}
+              control={control}
+              onRemoveDestination={handleRemoveDestination}
+              errors={errors}
+            />
+            <div
+              onClick={handleAddDestination}
+              className="group relative left-[48px] flex w-36 cursor-pointer items-center justify-between gap-1"
+            >
+              <div className=" flex h-4 w-4 items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 group-hover:scale-110">
+                <PlusIcon className="stroke-purple-dark" />
+              </div>
+              <span className="text-purple-dark">
+                Add destination
+              </span>
             </div>
-            <span className="text-purple-dark">
-              Add destination
-            </span>
+          </div>
+          <div className="relative left-[10px] flex w-[236px] justify-between gap-5 self-center md:left-0 md:w-auto md:flex-col md:items-start md:self-start">
+            <Passengers control={control} />
+            <CustomDatePicker
+              control={control}
+              onSelectDate={handleSelectDate}
+              error={errors.date?.message}
+            />
           </div>
         </div>
-        <div className="relative left-[10px] flex w-[236px] justify-between gap-5 self-center md:left-0 md:w-auto md:flex-col md:items-start md:self-start">
-          <Passengers />
-          <CustomDatePicker
-            initialDate={tripDate}
-            onSelectDate={handleSelectDate}
+        <Link
+          to={{
+            pathname: '/results',
+            search: searchParams.toString()
+          }}
+        >
+          <Button
+            label="Submit"
+            type="submit"
+            form="destinations-form"
+            disabled={!isValid}
           />
-        </div>
-      </div>
-      <Link
-        to={{
-          pathname: '/results',
-          search: searchParams.toString()
-        }}
-      >
-        <Button label="Submit" />
-      </Link>
+        </Link>
+      </form>
     </div>
   );
 }

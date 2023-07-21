@@ -188,24 +188,9 @@ export default function Results() {
 
   const { searchParams } = useQueryParam();
 
-  const getCitiesFromParams = (): string[] => {
-    const origin = searchParams.get('origin')!;
-    const end = searchParams.get('end')!;
-    const intermediates = [];
-    const intermediatesCount = (
-      searchParams
-        .toString()
-        .match(new RegExp('intermediate', 'gi')) || []
-    ).length;
-    for (let i = 1; i <= intermediatesCount; i++) {
-      intermediates.push(
-        searchParams.get(`intermediate-${i}`)!
-      );
-    }
-    return [origin, ...intermediates, end];
-  };
-
-  const cities = getCitiesFromParams();
+  const cities = searchParams
+    .get('destinations')!
+    .split(',');
   const passengers = searchParams.get('passengers');
   const travelDate = searchParams.get('date');
 

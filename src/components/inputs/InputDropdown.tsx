@@ -9,30 +9,44 @@ import {
   TriangleUpIcon
 } from '@radix-ui/react-icons';
 import * as Popover from '@radix-ui/react-popover';
+import { useController, Control } from 'react-hook-form';
+import { IDestinationsFormValues } from '@/types/form';
 
 interface IInputDropdownProps {
   id: string;
-  initialValue?: string;
+  index: number;
   onSearch: (value: string) => Promise<string[]>;
   onSelect: (value: string) => void;
-  onClear?: () => string;
-  onError?: (value: string) => string;
+  onClear?: (value: string) => string;
+  control: Control<IDestinationsFormValues>;
+  customValidation: (value: string) => string | boolean;
+  error?: string;
 }
 
 export const InputDropdown = ({
   id,
-  initialValue = '',
+  index,
   onSearch,
   onSelect,
   onClear,
-  onError
+  control,
+  customValidation,
+  error
 }: IInputDropdownProps) => {
-  const [search, setSearch] = useState<string>('');
-  const [selected, setSelected] = useState<string>('');
+  const { field } = useController({
+    control,
+    name: `destinations.${index}.value`,
+    rules: {
+      validate: (fieldValue) => customValidation(fieldValue)
+    }
+  });
+  const [search, setSearch] = useState<string>(field.value);
+  const [selected, setSelected] = useState<string>(
+    field.value
+  );
   const [filteredItems, setFilteredItems] = useState<
     string[]
   >([]);
-  const [error, setError] = useState<string>('');
   const [empty, setEmpty] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] =
@@ -52,22 +66,18 @@ export const InputDropdown = ({
         setFilteredItems(items);
         setIsLoading(false);
         setEmpty(false);
-        setError('');
       } catch (e) {
-        setError(
-          'There was an error fetching data. Please try again.'
-        );
+        console.log(e);
       }
     },
     [onSearch]
   );
 
   useEffect(() => {
-    if (initialValue) {
-      setSearch(initialValue);
-      setSelected(initialValue);
+    if (error) {
+      setIsOpen(false);
     }
-  }, [initialValue]);
+  }, [error]);
 
   useEffect(() => {
     if (search.length > 0 && !selected && !error) {
@@ -81,43 +91,32 @@ export const InputDropdown = ({
   }, [search, selected, handleSearch, error]);
 
   const handleInputChange = (value: string) => {
+    field.onChange(value);
     setSearch(value);
-    setError('');
     setSelected('');
     setEmpty(false);
     setIsLoading(true);
     setIsOpen(true);
-
-    if (onError) {
-      const message = onError(value);
-      if (message) {
-        setIsOpen(false);
-        setEmpty(false);
-        setError(message);
-      }
-    }
   };
 
   const handleClearInput = () => {
     handleClose();
-    if (onClear) {
-      const message = onClear();
-      setError(message);
-    }
+    onClear && onClear(selected);
     setIsLoading(false);
     setEmpty(false);
     setSelected('');
     setSearch('');
+    field.onChange('');
   };
 
   const handleSelectItem = (item: string) => {
     handleClose();
     setIsLoading(false);
     setEmpty(false);
-    setError('');
     setSelected(item);
     setSearch(item);
     onSelect(item);
+    field.onChange(item);
   };
 
   const handleClose = () => setIsOpen(false);
@@ -176,7 +175,7 @@ export const InputDropdown = ({
             }
             autoComplete="off"
             className={`dbg-transparent w-full ${
-              error && 'text-red'
+              error ? 'text-red' : ''
             } & relative flex h-full items-center gap-5 border focus-visible:outline-none ${
               !error ? 'border-gray' : 'border-red'
             } rounded-md bg-transparent px-2`}

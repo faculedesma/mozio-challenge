@@ -9,9 +9,15 @@ import {
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { getMonth, getYear } from 'date-fns';
+import { useController, Control } from 'react-hook-form';
+import { Spinner } from '@/components/loaders/Spinner';
+import { IDestinationsFormValues } from '@/types/form';
+
 interface ICustomDatePickerProps {
   initialDate?: string;
   onSelectDate: (date: Date | null) => void;
+  control: Control<IDestinationsFormValues>;
+  error?: string;
 }
 
 interface ICustomHeaderProps {
@@ -135,29 +141,36 @@ const CustomHeader = ({
 };
 
 export const CustomDatePicker = ({
-  initialDate = '',
-  onSelectDate
+  onSelectDate,
+  control,
+  error
 }: ICustomDatePickerProps) => {
+  const { field } = useController({
+    control,
+    name: 'date',
+    rules: { required: 'Select a date' }
+  });
   const [startDate, setStartDate] = useState<Date | null>(
-    new Date()
+    null
   );
 
   useEffect(() => {
-    if (initialDate) {
-      setStartDate(new Date(initialDate));
+    if (field.value) {
+      setStartDate(new Date(field.value));
     }
-  }, [initialDate]);
+  }, [field.value]);
 
   const handleChangeDate = (date: Date | null) => {
+    field.onChange(date?.toString());
     setStartDate(date);
     onSelectDate(date);
   };
 
-  const isError = startDate === null;
-
   return (
     <div className="flex flex-col items-start gap-1">
       <label>Date</label>
+      {/* {!field.value ? (
+        <> */}
       <DatePicker
         dateFormat="MM/dd/yyyy"
         peekNextMonth
@@ -170,11 +183,15 @@ export const CustomDatePicker = ({
         calendarContainer={CustomContainer}
         renderCustomHeader={CustomHeader}
         fixedHeight
-        className={`${isError ? 'border border-red' : ''}`}
+        className={`${error ? 'border border-red' : ''}`}
       />
-      {isError ? (
+      {error ? (
         <p className="text-red">Select a date</p>
       ) : null}
+      {/* </>
+      ) : (
+        <Spinner />
+      )} */}
     </div>
   );
 };
