@@ -18,7 +18,8 @@ import {
   useController,
   Control,
   useFieldArray,
-  FieldErrors
+  FieldValues,
+  Path
 } from 'react-hook-form';
 import { Spinner } from '@/components/loaders/Spinner';
 import { IDestinationsFormValues } from '@/types/form';
@@ -32,34 +33,36 @@ const defaultDestinations = [
   }
 ];
 
+interface IPassengerProps<
+  TFieldValues extends FieldValues
+> {
+  control: Control<TFieldValues>;
+  name: Path<TFieldValues>;
+}
+
 interface IDestinationInput {
   id: string;
   value: string;
 }
 
 interface IDestinationInputProps {
-  destination: IDestinationInput;
   handleRemoveDestination: (id: number) => void;
   index: number;
   total: number;
   control: Control<IDestinationsFormValues>;
-  error: string | undefined;
 }
 
 interface IDestinationsProps {
-  destinations: IDestinationInput[];
+  fields: IDestinationInput[];
   control: Control<IDestinationsFormValues>;
   onRemoveDestination: (id: number) => void;
-  errors: FieldErrors<IDestinationsFormValues>;
 }
 
 const DestinationInput = ({
-  destination,
-  handleRemoveDestination,
   index,
   total,
   control,
-  error
+  handleRemoveDestination
 }: IDestinationInputProps) => {
   const isOrigin = index === 0;
   const isLastDestination = index === total - 1;
@@ -158,15 +161,13 @@ const DestinationInput = ({
           City of {isOrigin ? 'origin' : 'destination'}
         </label>
         <div className="flex items-center gap-4">
-          <InputDropdown
-            id={destination.id}
-            index={index}
+          <InputDropdown<IDestinationsFormValues>
+            name={`destinations.${index}.value`}
+            control={control}
             onSearch={handleSearchCities}
             onSelect={handleSelectCity}
             onClear={handleClearCity}
-            control={control}
             customValidation={handleInputError}
-            error={error}
           />
           {isRemovable ? (
             <div
@@ -183,27 +184,21 @@ const DestinationInput = ({
 };
 
 const Destinations = ({
-  destinations,
+  fields,
   control,
-  onRemoveDestination,
-  errors
+  onRemoveDestination
 }: IDestinationsProps) => {
-  console.log(errors);
   return (
     <div className="flex flex-col gap-5">
-      {destinations.map((destination, index) => {
+      {fields.map((field, index) => {
         return (
           <DestinationInput
-            key={destination.id}
-            destination={destination}
+            key={field.id}
             index={index}
-            total={destinations.length}
+            total={fields.length}
             control={control}
             handleRemoveDestination={() =>
               onRemoveDestination(index)
-            }
-            error={
-              errors?.destinations?.[index]?.value?.message
             }
           />
         );
@@ -212,14 +207,13 @@ const Destinations = ({
   );
 };
 
-const Passengers = ({
-  control
-}: {
-  control: Control<IDestinationsFormValues>;
-}) => {
+const Passengers = <TFieldValues extends FieldValues>({
+  control,
+  name
+}: IPassengerProps<TFieldValues>) => {
   const { field } = useController({
     control,
-    name: 'passengers',
+    name,
     rules: { required: true }
   });
 
@@ -293,7 +287,7 @@ export default function Home() {
     handleSubmit,
     control,
     reset,
-    formState: { errors, isValid }
+    formState: { isValid }
   } = useForm<IDestinationsFormValues>({
     defaultValues: initialValues,
     mode: 'onChange'
@@ -382,10 +376,9 @@ export default function Home() {
         <div className="flex w-full flex-col items-start justify-between gap-8 md:flex-row md:gap-0">
           <div className="flex max-h-full flex-col gap-4 self-center">
             <Destinations
-              destinations={fields}
+              fields={fields}
               control={control}
               onRemoveDestination={handleRemoveDestination}
-              errors={errors}
             />
             <div
               onClick={handleAddDestination}
@@ -400,11 +393,14 @@ export default function Home() {
             </div>
           </div>
           <div className="relative left-[10px] flex w-[236px] justify-between gap-5 self-center md:left-0 md:w-auto md:flex-col md:items-start md:self-start">
-            <Passengers control={control} />
-            <CustomDatePicker
+            <Passengers
               control={control}
+              name="passengers"
+            />
+            <CustomDatePicker<IDestinationsFormValues>
+              control={control}
+              name="date"
               onSelectDate={handleSelectDate}
-              error={errors.date?.message}
             />
           </div>
         </div>

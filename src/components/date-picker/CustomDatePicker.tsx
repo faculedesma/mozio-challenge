@@ -9,15 +9,21 @@ import {
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { getMonth, getYear } from 'date-fns';
-import { useController, Control } from 'react-hook-form';
-import { Spinner } from '@/components/loaders/Spinner';
-import { IDestinationsFormValues } from '@/types/form';
+import {
+  useController,
+  Control,
+  FieldValues,
+  UseControllerProps,
+  Path
+} from 'react-hook-form';
 
-interface ICustomDatePickerProps {
+interface ICustomDatePickerProps<
+  TFieldValues extends FieldValues
+> extends UseControllerProps<TFieldValues> {
   initialDate?: string;
   onSelectDate: (date: Date | null) => void;
-  control: Control<IDestinationsFormValues>;
-  error?: string;
+  control: Control<TFieldValues>;
+  name: Path<TFieldValues>;
 }
 
 interface ICustomHeaderProps {
@@ -140,14 +146,19 @@ const CustomHeader = ({
   );
 };
 
-export const CustomDatePicker = ({
+export const CustomDatePicker = <
+  TFieldValues extends FieldValues
+>({
   onSelectDate,
   control,
-  error
-}: ICustomDatePickerProps) => {
-  const { field } = useController({
+  name
+}: ICustomDatePickerProps<TFieldValues>) => {
+  const {
+    field,
+    fieldState: { error }
+  } = useController({
     control,
-    name: 'date',
+    name,
     rules: { required: 'Select a date' }
   });
   const [startDate, setStartDate] = useState<Date | null>(
@@ -169,8 +180,6 @@ export const CustomDatePicker = ({
   return (
     <div className="flex flex-col items-start gap-1">
       <label>Date</label>
-      {/* {!field.value ? (
-        <> */}
       <DatePicker
         dateFormat="MM/dd/yyyy"
         peekNextMonth
@@ -188,10 +197,6 @@ export const CustomDatePicker = ({
       {error ? (
         <p className="text-red">Select a date</p>
       ) : null}
-      {/* </>
-      ) : (
-        <Spinner />
-      )} */}
     </div>
   );
 };

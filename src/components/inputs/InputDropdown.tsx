@@ -1,49 +1,47 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Cross1Icon,
   TriangleUpIcon
 } from '@radix-ui/react-icons';
 import * as Popover from '@radix-ui/react-popover';
-import { useController, Control } from 'react-hook-form';
-import { IDestinationsFormValues } from '@/types/form';
+import {
+  useController,
+  Control,
+  FieldValues,
+  Path
+} from 'react-hook-form';
 
-interface IInputDropdownProps {
-  id: string;
-  index: number;
+interface IInputDropdownProps<
+  TFieldValues extends FieldValues
+> {
+  control: Control<TFieldValues>;
+  name: Path<TFieldValues>;
   onSearch: (value: string) => Promise<string[]>;
   onSelect: (value: string) => void;
-  onClear?: (value: string) => string;
-  control: Control<IDestinationsFormValues>;
+  onClear?: (value: string) => void;
   customValidation: (value: string) => string | boolean;
-  error?: string;
 }
 
-export const InputDropdown = ({
-  id,
-  index,
+export const InputDropdown = <
+  TFieldValues extends FieldValues
+>({
+  name,
+  control,
   onSearch,
   onSelect,
   onClear,
-  control,
-  customValidation,
-  error
-}: IInputDropdownProps) => {
-  const { field } = useController({
+  customValidation
+}: IInputDropdownProps<TFieldValues>) => {
+  const {
+    field,
+    fieldState: { error }
+  } = useController({
     control,
-    name: `destinations.${index}.value`,
+    name,
     rules: {
       validate: (fieldValue) => customValidation(fieldValue)
     }
   });
-  const [search, setSearch] = useState<string>(field.value);
-  const [selected, setSelected] = useState<string>(
-    field.value
-  );
   const [filteredItems, setFilteredItems] = useState<
     string[]
   >([]);
@@ -52,26 +50,21 @@ export const InputDropdown = ({
   const [isLoading, setIsLoading] =
     useState<boolean>(false);
 
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleSearch = useCallback(
-    async (searchValue: string) => {
-      try {
-        const items = await onSearch(searchValue);
-        if (!items.length) {
-          setEmpty(true);
-          setIsLoading(false);
-          return;
-        }
-        setFilteredItems(items);
+  const handleSearch = useCallback(async () => {
+    try {
+      const items = await onSearch(field.value);
+      if (!items.length) {
+        setEmpty(true);
         setIsLoading(false);
-        setEmpty(false);
-      } catch (e) {
-        console.log(e);
+        return;
       }
-    },
-    [onSearch]
-  );
+      setFilteredItems(items);
+      setIsLoading(false);
+      setEmpty(false);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [onSearch, field.value]);
 
   useEffect(() => {
     if (error) {
@@ -80,43 +73,37 @@ export const InputDropdown = ({
   }, [error]);
 
   useEffect(() => {
-    if (search.length > 0 && !selected && !error) {
+    if (field.value.length > 0 && !error) {
       const debounceTimer = setTimeout(async () => {
-        await handleSearch(search);
+        await handleSearch();
       }, 500);
       return () => {
         clearTimeout(debounceTimer);
       };
     }
-  }, [search, selected, handleSearch, error]);
+  }, [handleSearch, field.value, error]);
 
   const handleInputChange = (value: string) => {
     field.onChange(value);
-    setSearch(value);
-    setSelected('');
-    setEmpty(false);
     setIsLoading(true);
     setIsOpen(true);
+    setEmpty(false);
   };
 
   const handleClearInput = () => {
     handleClose();
-    onClear && onClear(selected);
+    onClear && onClear(field.value);
     setIsLoading(false);
     setEmpty(false);
-    setSelected('');
-    setSearch('');
     field.onChange('');
   };
 
   const handleSelectItem = (item: string) => {
-    handleClose();
+    field.onChange(item);
     setIsLoading(false);
     setEmpty(false);
-    setSelected(item);
-    setSearch(item);
     onSelect(item);
-    field.onChange(item);
+    handleClose();
   };
 
   const handleClose = () => setIsOpen(false);
@@ -138,7 +125,7 @@ export const InputDropdown = ({
     if (empty && !error) {
       return (
         <p className="text-left">
-          No results were found for <b>{search}</b>
+          No results were found for <b>{field.value}</b>
         </p>
       );
     }
@@ -146,30 +133,26 @@ export const InputDropdown = ({
     return filteredItems?.map((item) => {
       return (
         <div
-          key={item}
+          key={item.toString()}
           onClick={() => handleSelectItem(item)}
           className="flex h-[28px] w-full cursor-pointer items-center justify-start rounded-md p-1 transition-all duration-300 hover:bg-purple-light focus-visible:bg-purple-light focus-visible:outline-none"
         >
-          {item}
+          {item.toString()}
         </div>
       );
     });
   };
 
-  const removeAutoFocusPopover = (event: Event) => {
+  const removeAutoFocusPopover = (event: Event) =>
     event.preventDefault();
-    inputRef.current?.focus();
-  };
 
   return (
     <div className="relative flex flex-col items-start justify-start gap-1">
       <Popover.Root open={isOpen}>
         <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
           <input
-            id={id}
-            type="text"
-            ref={inputRef}
-            value={search}
+            name={field.name}
+            value={field.value}
             onChange={(e) =>
               handleInputChange(e.target.value)
             }
@@ -180,14 +163,16 @@ export const InputDropdown = ({
               !error ? 'border-gray' : 'border-red'
             } rounded-md bg-transparent px-2`}
           />
-          {!error && search ? (
+          {!error && field.value ? (
             <Cross1Icon
               className="absolute right-3 top-3 cursor-pointer stroke-purple-dark transition-all duration-300 hover:scale-90"
               onClick={handleClearInput}
             />
           ) : null}
         </div>
-        {error ? <p className="text-red">{error}</p> : null}
+        {error ? (
+          <p className="text-red">{error.message}</p>
+        ) : null}
         <Popover.Trigger></Popover.Trigger>
         <Popover.Content
           onOpenAutoFocus={removeAutoFocusPopover}
