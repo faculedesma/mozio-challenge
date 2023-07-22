@@ -374,8 +374,8 @@ export default function Home() {
     if (date !== null) {
       const month =
         date.getMonth().toString().length === 1
-          ? `0${date.getMonth()}`
-          : date.getMonth();
+          ? `0${date.getMonth() + 1}`
+          : date.getMonth() + 1;
       const day =
         date.getDate().toString().length === 1
           ? `0${date.getDate()}`
