@@ -84,9 +84,12 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          command: npx cypress run
+          install: false
+          start: npm run cypress:record
           browser: chrome
-          wait-on: 'https://faculedesma.github.io/mozio-challenge'
+          record: true
+          parallel: true
+          group: 'e2e - chrome'
           config: videosFolder=/tmp/cypress-videos
 
   # deploy
