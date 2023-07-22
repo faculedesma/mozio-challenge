@@ -22,12 +22,24 @@ You will be using the following technologies to build the travel planner:
 <br>
 
 <div style="display:inline-block">
+<a href="https://react.dev/">
 <img width="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2300px-React-icon.svg.png" alt="react-logo" />
+</a>
+<a href="https://www.typescriptlang.org/">
 <img width="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Typescript_logo_2020.svg/2048px-Typescript_logo_2020.svg.png" alt="typescript-logo" />
+</a>
+<a href="https://vitejs.dev/">
 <img width="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1039px-Vitejs-logo.svg.png" alt="vite-logo" />
+</a>
+<a href="https://www.radix-ui.com/">
 <img width="50" src="https://avatars.githubusercontent.com/u/75042455?s=280&v=4" alt="radix-logo" />
-<img width="150" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Tailwind_CSS_logo.svg/2560px-Tailwind_CSS_logo.svg.png" alt="tailwind-logo" />
-<img width="75" src="https://cdn.iconscout.com/icon/free/png-256/free-jest-3521517-2945020.png" alt="jest-logo" />
+</a>
+<a href="https://tailwindcss.com/">
+<img width="60" src="https://avatars.githubusercontent.com/u/67109815?s=280&v=4" alt="tailwind-logo" />
+</a>
+<a href="https://jestjs.io/">
+<img width="50" src="https://cdn.iconscout.com/icon/free/png-256/free-jest-3521517-2945020.png" alt="jest-logo" />
+</a>
 </div>
 
 <br>
