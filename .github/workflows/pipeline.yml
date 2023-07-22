@@ -37,25 +37,9 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-  # build
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm install
-      - name: Test build
-        run: npm run build
-
   #unit-tests
   unit-tests:
-    needs: [lint, build]
+    needs: [lint]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -70,30 +54,50 @@ jobs:
       - name: Unit tests
         run: npm run test
 
-  #e2e-tests
-  e2e-tests:
-    needs: [lint, build]
+  #e2e-tests-install
+  e2e-tests-install:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node16.16.0-chrome107-ff107-edge
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install dependencies
-        run: npm install
+
+      - name: Cypress install
+        uses: cypress-io/github-action@v5
+        with:
+          # Disable running of tests within install job
+          runTests: false
+          build: npm run build
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          if-no-files-found: error
+          path: build
+
+  #e2e-tests-run
+  e2e-tests-run:
+    needs: [e2e-tests-install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download the build folder
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: build
+
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          install: false
-          start: npx cypress run
+          start: npm start
           browser: chrome
-          record: true
-          parallel: true
-          group: 'e2e - chrome'
-          config: videosFolder=/tmp/cypress-videos
 
   # deploy
   deploy:
-    needs: [unit-tests, e2e-tests]
+    needs: [unit-tests, e2e-tests-run]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
