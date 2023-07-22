@@ -39,7 +39,6 @@ jobs:
 
   # build
   build:
-    needs: [lint]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -54,9 +53,29 @@ jobs:
       - name: Test build
         run: npm run build
 
+  #test
+  test:
+    needs: [lint, build]
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@faculedesma'
+      - name: Install dependencies
+        run: npm ci
+      - name: Unit tests
+        run: npm run test
+
   # deploy
   deploy:
-    needs: [build]
+    needs: [test]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

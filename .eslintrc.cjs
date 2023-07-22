@@ -28,5 +28,10 @@ module.exports = {
       }
     ]
   },
-  ignorePatterns: ['.eslintrc.cjs']
+  ignorePatterns: [
+    '.eslintrc.cjs',
+    'fileMock.js',
+    'postcss.config.js',
+    'tailwind.config.js'
+  ]
 };
