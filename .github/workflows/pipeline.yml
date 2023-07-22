@@ -86,7 +86,7 @@ jobs:
           command: npx cypress run
           browser: chrome
           wait-on: 'https://faculedesma.github.io/mozio-challenge'
-          config: baseUrl=https://faculedesma.github.io/mozio-challenge
+          config: videosFolder=/tmp/cypress-videos
 
   # deploy
   deploy:
