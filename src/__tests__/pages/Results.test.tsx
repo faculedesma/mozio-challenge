@@ -12,13 +12,13 @@ jest.mock('@/api/TravelAPI', () => ({
     getDistanceBetweenCities: jest.fn().mockResolvedValue([
       {
         cityOne: 'Paris',
-        cityTwo: 'Toulouse',
-        distance: 588.14
+        cityTwo: 'Aix-en-Provence',
+        distance: 638.3
       },
       {
-        cityOne: 'Toulouse',
+        cityOne: 'Aix-en-Provence',
         cityTwo: 'Montpellier',
-        distance: 195.84
+        distance: 126.86
       }
     ])
   }
@@ -31,7 +31,7 @@ describe('Results Component', () => {
     render(
       <MemoryRouter
         initialEntries={[
-          '?destinations=Paris%2CToulouse%2CMontpellier&passengers=2&date=date=07-22-2023'
+          '?destinations=Paris%2CAix-en-Provence%2CMontpellier&passengers=2&date=date=07-22-2023'
         ]}
       >
         <Results />
@@ -67,7 +67,7 @@ describe('Results Component', () => {
     render(
       <MemoryRouter
         initialEntries={[
-          '?destinations=Paris%2CToulouse%2CMontpellier&passengers=2&date=07-22-2023'
+          '?destinations=Paris%2CAix-en-Provence%2CMontpellier&passengers=2&date=07-22-2023'
         ]}
       >
         <Results />
@@ -79,13 +79,13 @@ describe('Results Component', () => {
     await waitFor(() => {
       expect(screen.getByText('Paris')).toBeInTheDocument();
       expect(
-        screen.getByText('Toulouse')
+        screen.getByText('Aix-en-Provence')
       ).toBeInTheDocument();
       expect(
         screen.getByText('Montpellier')
       ).toBeInTheDocument();
       expect(
-        screen.getByText('783.98 km')
+        screen.getByText('765.16 km')
       ).toBeInTheDocument();
       expect(screen.getByText('2')).toBeInTheDocument();
       expect(

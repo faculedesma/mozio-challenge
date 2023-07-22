@@ -68,11 +68,8 @@ const DestinationInput = ({
   const isLastDestination = index === total - 1;
   const isRemovable = !isOrigin && !isLastDestination;
 
-  const {
-    searchParams,
-    updateQueryParam,
-    removeQueryParam
-  } = useQueryParam();
+  const { searchParams, updateQueryParam } =
+    useQueryParam();
 
   const handleSearchCities = useCallback(
     async (value: string) => {
@@ -89,25 +86,6 @@ const DestinationInput = ({
     []
   );
 
-  const handleClearCity = (city: string) => {
-    const destinations = searchParams.get('destinations')!;
-    const updatedDestinations = destinations.split(',');
-    if (!updatedDestinations) {
-      removeQueryParam('destinations');
-    } else {
-      const indexToRemove =
-        updatedDestinations.indexOf(city);
-      if (indexToRemove !== -1) {
-        updatedDestinations.splice(index, 1);
-      }
-      updateQueryParam(
-        'destinations',
-        updatedDestinations.filter((d) => d !== city).join()
-      );
-    }
-    return 'You must choose a city';
-  };
-
   const handleSelectCity = (city: string) => {
     let destinationQuery = '';
     const destinations =
@@ -116,12 +94,10 @@ const DestinationInput = ({
       destinationQuery = city;
     } else {
       const updatedDestinations = destinations.split(',');
-      if (updatedDestinations.length < 2) {
-        updatedDestinations.push(city);
+      if (updatedDestinations.length === total) {
+        updatedDestinations[index] = city;
       } else {
-        const indexToInsert =
-          updatedDestinations.length - 1;
-        updatedDestinations.splice(indexToInsert, 0, city);
+        updatedDestinations.splice(index, 0, city);
       }
       destinationQuery = updatedDestinations.join();
     }
@@ -166,7 +142,6 @@ const DestinationInput = ({
             control={control}
             onSearch={handleSearchCities}
             onSelect={handleSelectCity}
-            onClear={handleClearCity}
             customValidation={handleInputError}
           />
           {isRemovable ? (

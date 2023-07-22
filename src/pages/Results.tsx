@@ -136,7 +136,7 @@ const ResultTotal = ({
     <div className="flex flex-col items-center gap-4">
       <div className="flex items-center gap-2">
         <span className="font-bold text-purple-dark">
-          {totalDistance} km
+          {totalDistance.toFixed(2)} km
         </span>
         <span>is total distance</span>
       </div>
