@@ -26,7 +26,7 @@ const haversineCalculation = (
 
   const distance = EARTH_RADIUS * c;
 
-  return distance;
+  return parseFloat(distance.toFixed(2));
 };
 
 export { haversineCalculation };

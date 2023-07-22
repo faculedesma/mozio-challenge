@@ -13,7 +13,7 @@ jest.mock('@/api/TravelAPI', () => ({
       {
         cityOne: 'Paris',
         cityTwo: 'Toulouse',
-        distance: 594.95
+        distance: 588.14
       },
       {
         cityOne: 'Toulouse',
@@ -85,7 +85,7 @@ describe('Results Component', () => {
         screen.getByText('Montpellier')
       ).toBeInTheDocument();
       expect(
-        screen.getByText('790.79 km')
+        screen.getByText('783.98 km')
       ).toBeInTheDocument();
       expect(screen.getByText('2')).toBeInTheDocument();
       expect(

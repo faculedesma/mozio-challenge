@@ -28,6 +28,11 @@
     "test",
     "__mocks__"
   ],
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules",
+    "./cypress.config.ts",
+    "cypress",
+    "**/*.cy.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -68,7 +68,7 @@ const ResultsRoadStop = ({
           <div className="flex items-center justify-center gap-3 self-start">
             <div className="relative flex h-[24px] w-[96px] items-center justify-center self-end rounded-md border border-purple-dark">
               <span className="text-[14px] text-purple-dark">
-                {kilometers.toFixed(2)} km
+                {kilometers} km
               </span>
               <SliderIcon className="absolute -right-[16px] text-purple-light" />
             </div>
@@ -95,7 +95,7 @@ const ResultsRoadStop = ({
           <div className="flex items-center justify-center gap-3 self-start">
             <div className="relative flex h-[24px] w-[96px] items-center justify-center self-end rounded-md border border-purple-dark">
               <span className="text-[14px] text-purple-dark">
-                {kilometers.toFixed(2)} km
+                {kilometers} km
               </span>
               <SliderIcon className="absolute -right-[16px] text-purple-light" />
             </div>
@@ -136,7 +136,7 @@ const ResultTotal = ({
     <div className="flex flex-col items-center gap-4">
       <div className="flex items-center gap-2">
         <span className="font-bold text-purple-dark">
-          {totalDistance.toFixed(2)} km
+          {totalDistance} km
         </span>
         <span>is total distance</span>
       </div>
