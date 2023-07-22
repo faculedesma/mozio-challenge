@@ -16,6 +16,7 @@ import { useQueryParam } from '@/hooks/useQueryParams';
 import { ICityDistance } from '@/types/city';
 import { travelAPI } from '@/api/TravelAPI';
 import ErrorPage from '@/pages/Error';
+import useIsMounted from '@/hooks/useIsMounted';
 
 interface IResultsRoadStopProps {
   cityOne: string;
@@ -36,7 +37,10 @@ interface IResultRoadProps {
 
 const Loading = () => {
   return (
-    <div className="flex flex-col gap-10 md:flex-row">
+    <div
+      role="loading-pulse"
+      className="flex flex-col gap-10 md:flex-row"
+    >
       <div className="h-[200px] w-[300px] animate-pulse rounded-lg border border-purple-light bg-purple-light md:h-[300px]"></div>
       <div className="flex flex-col gap-4">
         <div className="h-[100px] w-[300px] animate-pulse rounded-md bg-purple-light md:h-[150px]"></div>
@@ -185,6 +189,7 @@ export default function Results() {
     ICityDistance[]
   >([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const isMounted = useIsMounted();
 
   const { searchParams } = useQueryParam();
 
@@ -208,10 +213,12 @@ export default function Results() {
   }, [cities]);
 
   useEffect(() => {
-    setTimeout(async () => {
-      await calculateDistances();
-    }, 1500);
-  }, [calculateDistances]);
+    if (!distances.length && isMounted) {
+      setTimeout(async () => {
+        await calculateDistances();
+      }, 1500);
+    }
+  }, [calculateDistances, distances, isMounted]);
 
   if (cities.includes('Dijon')) {
     return (
