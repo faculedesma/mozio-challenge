@@ -307,10 +307,22 @@ export default function Home() {
   useEffect(() => {
     const getDefaultFormValues = () => {
       let currentDestinations;
+      let parsedDate;
       const passengers = searchParams.get('passengers')
         ? parseInt(searchParams.get('passengers')!)
         : 1;
-      const date = searchParams.get('date') || new Date();
+      const date = searchParams.get('date');
+      if (date) {
+        const splittedDate = date.split('-');
+        console.log(splittedDate);
+        parsedDate = new Date(
+          parseInt(splittedDate[2]),
+          parseInt(splittedDate[0]),
+          parseInt(splittedDate[1])
+        );
+      } else {
+        parsedDate = new Date();
+      }
       const destinations = searchParams
         .get('destinations')
         ?.split(',');
@@ -328,7 +340,7 @@ export default function Home() {
       }
       return {
         passengers,
-        date: date.toString(),
+        date: parsedDate.toString(),
         destinations:
           currentDestinations || defaultDestinations
       };
@@ -360,7 +372,18 @@ export default function Home() {
 
   const handleSelectDate = (date: Date | null) => {
     if (date !== null) {
-      updateQueryParam('date', date.toString());
+      const month =
+        date.getMonth().toString().length === 1
+          ? `0${date.getMonth()}`
+          : date.getMonth();
+      const day =
+        date.getDate().toString().length === 1
+          ? `0${date.getDate()}`
+          : date.getDate();
+      updateQueryParam(
+        'date',
+        `${month}-${day}-${date.getFullYear()}`
+      );
     } else {
       removeQueryParam('date');
     }

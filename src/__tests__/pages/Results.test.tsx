@@ -31,7 +31,7 @@ describe('Results Component', () => {
     render(
       <MemoryRouter
         initialEntries={[
-          '?destinations=Paris%2CToulouse%2CMontpellier&passengers=2&date=Sat+Jul+22+2023+00%3A21%3A56+GMT%2B0200+%28Central+European+Summer+Time%29'
+          '?destinations=Paris%2CToulouse%2CMontpellier&passengers=2&date=date=07-22-2023'
         ]}
       >
         <Results />
@@ -46,7 +46,7 @@ describe('Results Component', () => {
     render(
       <MemoryRouter
         initialEntries={[
-          '?destinations=Paris%2CDijon%2CMontpellier&passengers=2&date=Sat+Jul+22+2023+00%3A21%3A56+GMT%2B0200+%28Central+European+Summer+Time%29'
+          '?destinations=Paris%2CDijon%2CMontpellier&passengers=2&date=date=07-22-2023'
         ]}
       >
         <Results />
@@ -67,7 +67,7 @@ describe('Results Component', () => {
     render(
       <MemoryRouter
         initialEntries={[
-          '?destinations=Paris%2CToulouse%2CMontpellier&passengers=2&date=Sat+Jul+22+2023+00%3A21%3A56+GMT%2B0200+%28Central+European+Summer+Time%29'
+          '?destinations=Paris%2CToulouse%2CMontpellier&passengers=2&date=07-22-2023'
         ]}
       >
         <Results />
