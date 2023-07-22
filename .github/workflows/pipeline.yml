@@ -72,16 +72,18 @@ jobs:
 
   #e2e-tests
   e2e-tests:
+    needs: [lint, build]
     runs-on: ubuntu-latest
     container: cypress/browsers:node16.16.0-chrome107-ff107-edge
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          build: npm run build
-          start: npm start
+          command: npx cypress run
           browser: chrome
           wait-on: 'https://faculedesma.github.io/mozio-challenge'
           config: baseUrl=https://faculedesma.github.io/mozio-challenge
