@@ -1,4 +1,4 @@
-[![Deployment Pipeline](https://github.com/faculedesma/ledesma-app/actions/workflows/pipeline.yml/badge.svg)](https://github.com/faculedesma/mozio-challenge/actions/workflows/pipeline.yml)
+[![Deployment Pipeline](https://github.com/faculedesma/mozio-challenge/actions/workflows/pipeline.yml/badge.svg)](https://github.com/faculedesma/mozio-challenge/actions/workflows/pipeline.yml)
 
 <a href="https://www.mozio.com/en-us/" rel="noopener" target="_blank"><img width="150" src="public/mozio-logo.svg" alt="mozio-logo"></a>
 
