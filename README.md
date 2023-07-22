@@ -21,7 +21,7 @@ You will be using the following technologies to build the travel planner:
 <br>
 <br>
 
-<div style="width: 300px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap:20px">
+<div style="display:inline-block">
 <img width="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2300px-React-icon.svg.png" alt="react-logo" />
 <img width="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Typescript_logo_2020.svg/2048px-Typescript_logo_2020.svg.png" alt="typescript-logo" />
 <img width="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1039px-Vitejs-logo.svg.png" alt="vite-logo" />
@@ -62,23 +62,26 @@ This will start the development server, and you can view the app at http://local
 ## UI/UX
 
 Followed this figma prototype:
-<a href="https://www.figma.com/file/GSIB3ruHqfmv2Rubs4wK6J/?type=design&node-id=119-2499&mode=design&t=X5d7zOYCGiTKSzvG-0">
-<img width="50" src="https://cdn.sanity.io/images/599r6htc/localized/46a76c802176eb17b04e12108de7e7e0f3736dc6-1024x1024.png?w=804&h=804&q=75&fit=max&auto=format" alt="tailwind-logo" />
-</a>
+
+<div class="display:inline-block">
+   <a href="https://www.figma.com/file/GSIB3ruHqfmv2Rubs4wK6J/?type=design&node-id=119-2499&mode=design&t=X5d7zOYCGiTKSzvG-0">
+   <img width="50" src="https://cdn.sanity.io/images/599r6htc/localized/46a76c802176eb17b04e12108de7e7e0f3736dc6-1024x1024.png?w=804&h=804&q=75&fit=max&auto=format" alt="tailwind-logo" />
+   </a>
+</div>
 
 ## Additional considerations
 
-- Origins and end destinations should always be present. Intermediate destinations can be added in between.
+- Origin and end destinations should always be selected. Intermediate destinations can be added in between.
 
-- The default value is set to 1 passenger. If the user doesn't increment or decrement this value, we will use the default value to display results. Based on this, the user can't select a value lower than one; therefore, no error message needs to be displayed.
+- The default value for the number of passengers is set to 1. f the user doesn't change this value, the default value will be used to display results. As a result, the user can't select a value lower than one, and no error message needs to be displayed.
 
-- The default date value is set to today. If the user doesn't increment or decrement this value, we will use the default value to display results.
+- The default value for the travel date is set to today. If the user doesn't change this value, the default value will be used to display results.
 
 - The travel date cannot be earlier than today or more than one year in the future.
 
 - I have made a few changes to the UI based on my personal preferences, as I believe they enhance the visual appeal and user experience.
 
-- I have added a dummy Google map next to the results information. I believe that incorporating a map could provide users with more context and enhance their overall experience.
+- I have made a few changes to the UI based on my personal preferences, as I believe they enhance the visual appeal and improve the user experience.
 
 ## Contact
 
