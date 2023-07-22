@@ -54,50 +54,20 @@ jobs:
       - name: Unit tests
         run: npm run test
 
-  #e2e-tests-install
-  e2e-tests-install:
+  #e2e-tests
+  e2e-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Cypress install
-        uses: cypress-io/github-action@v5
-        with:
-          # Disable running of tests within install job
-          runTests: false
-          build: npm run build
-
-      - name: Save build folder
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          if-no-files-found: error
-          path: build
-
-  #e2e-tests-run
-  e2e-tests-run:
-    needs: [e2e-tests-install]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Download the build folder
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: build
-
+      # Install npm dependencies, cache them correctly
+      # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v5
-        with:
-          start: npm start
-          browser: chrome
 
   # deploy
   deploy:
-    needs: [unit-tests, e2e-tests-run]
+    needs: [unit-tests, e2e-tests]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
