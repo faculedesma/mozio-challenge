@@ -149,6 +149,7 @@ export const InputDropdown = <
   return (
     <div className="relative flex flex-col items-start justify-start gap-1">
       <Popover.Root open={isOpen}>
+        <Popover.Anchor />
         <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
           <input
             name={field.name}
@@ -163,7 +164,7 @@ export const InputDropdown = <
               !error ? 'border-gray' : 'border-red'
             } rounded-md bg-transparent px-2`}
           />
-          {!error && field.value ? (
+          {field.value ? (
             <Cross1Icon
               className="absolute right-3 top-3 cursor-pointer stroke-purple-dark transition-all duration-300 hover:scale-90"
               onClick={handleClearInput}
@@ -173,20 +174,22 @@ export const InputDropdown = <
         {error ? (
           <p className="text-red">{error.message}</p>
         ) : null}
-        <Popover.Trigger></Popover.Trigger>
-        <Popover.Content
-          onOpenAutoFocus={removeAutoFocusPopover}
-          onCloseAutoFocus={handleClose}
-          onEscapeKeyDown={handleClose}
-          onPointerDownOutside={handleClose}
-          onInteractOutside={handleClose}
-          className="absolute left-0 top-2 z-10 flex max-h-[180px] w-[236px] flex-col gap-1 rounded-lg border border-purple-light bg-white p-2 shadow-purple-light focus-visible:outline-none md:w-[324px]"
-        >
-          <TriangleUpIcon className="absolute -top-3 left-2 text-purple-dark" />
-          <div className="h-full overflow-scroll">
-            {getDropdownContent()}
-          </div>
-        </Popover.Content>
+        <Popover.Trigger asChild></Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content
+            onOpenAutoFocus={removeAutoFocusPopover}
+            onCloseAutoFocus={handleClose}
+            onEscapeKeyDown={handleClose}
+            onPointerDownOutside={handleClose}
+            onInteractOutside={handleClose}
+            className="absolute left-0 top-14 z-10 flex max-h-[180px] w-[236px] flex-col gap-1 rounded-lg border border-purple-light bg-white p-2 shadow-purple-light focus-visible:outline-none md:w-[324px]"
+          >
+            <TriangleUpIcon className="absolute -top-3 left-2 text-purple-dark" />
+            <div className="h-full overflow-scroll">
+              {getDropdownContent()}
+            </div>
+          </Popover.Content>
+        </Popover.Portal>
       </Popover.Root>
     </div>
   );
