@@ -21,7 +21,7 @@ You will be using the following technologies to build the travel planner:
 <br>
 <br>
 
-<div style="display:inline-block">
+<div style="display:flex align-items:center">
 <a href="https://react.dev/">
 <img width="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2300px-React-icon.svg.png" alt="react-logo" />
 </a>
@@ -40,6 +40,9 @@ You will be using the following technologies to build the travel planner:
 <a href="https://jestjs.io/">
 <img width="50" src="https://cdn.iconscout.com/icon/free/png-256/free-jest-3521517-2945020.png" alt="jest-logo" />
 </a>
+<a href="https://www.cypress.io/">
+<img width="50" src="https://images.g2crowd.com/uploads/product/image/large_detail/large_detail_10f53e90961b98df0191922f13efd135/cypress.png" alt="cypress-logo" />
+</a>
 </div>
 
 <br>
@@ -51,6 +54,7 @@ You will be using the following technologies to build the travel planner:
 - **Vite**: A fast and lightweight development server and build tool.
 - **Radix UI**: A collection of accessible and composable React components.
 - **Jest**: A JavaScript testing framework for unit testing your code.
+- **Cypress**: A JavaScript end-to-end testing framework for web applications.
 
 ## Getting Started
 
