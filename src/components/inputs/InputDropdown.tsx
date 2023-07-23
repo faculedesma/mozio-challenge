@@ -195,6 +195,7 @@ export const InputDropdown = <
     if (key === 'Enter') {
       onSelect && onSelect(filteredItems[focusedIndex]);
       field.onChange(filteredItems[focusedIndex]);
+      setIsOpen(false);
     }
 
     setFocusedIndex(nextIndexCount);
