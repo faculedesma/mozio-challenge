@@ -144,14 +144,20 @@ const DestinationInput = ({
             onSelect={handleSelectCity}
             customValidation={handleInputError}
           />
-          {isRemovable ? (
-            <div
-              onClick={() => handleRemoveDestination(index)}
-              className="flex h-4 w-4 -translate-y-[2px] cursor-pointer items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 hover:scale-90"
-            >
-              <Cross1Icon className="h-2 w-2 stroke-purple-dark" />
-            </div>
-          ) : null}
+          <div
+            onClick={() => handleRemoveDestination(index)}
+            className={
+              `flex h-4 w-4 -translate-y-[2px] cursor-pointer ${!isRemovable ? 'border-0': ''} items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 hover:scale-90`
+            }
+          >
+            <Cross1Icon
+              className={`${
+                !isRemovable
+                  ? 'pointer-events-none hidden'
+                  : ''
+              } h-2 w-2 stroke-purple-dark`}
+            />
+          </div>
         </div>
       </div>
     </div>
