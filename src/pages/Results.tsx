@@ -17,6 +17,7 @@ import { ICityDistance } from '@/types/city';
 import { travelAPI } from '@/api/TravelAPI';
 import ErrorPage from '@/pages/Error';
 import useIsMounted from '@/hooks/useIsMounted';
+import { parseDateFromURL } from '@/utils';
 
 interface IResultsRoadStopProps {
   cityOne: string;
@@ -121,17 +122,15 @@ const ResultTotal = ({
       return (acc = acc + current.distance);
     }, 0);
   }, [distances]);
-
-  const travelDate = date ? new Date(date) : new Date();
+  const travelDate = parseDateFromURL(date);
   const formattedDate = travelDate.toLocaleDateString(
-    'default',
+    'en-US',
     {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     }
   );
-
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex items-center gap-2">

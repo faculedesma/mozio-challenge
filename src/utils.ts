@@ -29,4 +29,19 @@ const haversineCalculation = (
   return parseFloat(distance.toFixed(2));
 };
 
-export { haversineCalculation };
+const parseDateFromURL = (date: string | null): Date => {
+  let parsedDate;
+  if (date) {
+    const splittedDate = date.split('-');
+    parsedDate = new Date(
+      parseInt(splittedDate[2]),
+      parseInt(splittedDate[0]) - 1,
+      parseInt(splittedDate[1])
+    );
+  } else {
+    parsedDate = new Date();
+  }
+  return parsedDate;
+};
+
+export { haversineCalculation, parseDateFromURL };

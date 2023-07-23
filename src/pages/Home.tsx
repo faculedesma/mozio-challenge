@@ -23,6 +23,7 @@ import { useQueryParam } from '@/hooks/useQueryParams';
 import { travelAPI } from '@/api/TravelAPI';
 import { Spinner } from '@/components/loaders/Spinner';
 import { IDestinationsFormValues } from '@/types/form';
+import { parseDateFromURL } from '@/utils';
 
 const defaultDestinations = [
   {
@@ -146,9 +147,9 @@ const DestinationInput = ({
           />
           <div
             onClick={() => handleRemoveDestination(index)}
-            className={
-              `flex h-4 w-4 -translate-y-[2px] cursor-pointer ${!isRemovable ? 'border-0': ''} items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 hover:scale-90`
-            }
+            className={`flex h-4 w-4 -translate-y-[2px] cursor-pointer ${
+              !isRemovable ? 'border-0' : ''
+            } items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 hover:scale-90`}
           >
             <Cross1Icon
               className={`${
@@ -298,22 +299,11 @@ export default function Home() {
   useEffect(() => {
     const getDefaultFormValues = () => {
       let currentDestinations;
-      let parsedDate;
       const passengers = searchParams.get('passengers')
         ? parseInt(searchParams.get('passengers')!)
         : 1;
       const date = searchParams.get('date');
-      if (date) {
-        const splittedDate = date.split('-');
-        console.log(splittedDate);
-        parsedDate = new Date(
-          parseInt(splittedDate[2]),
-          parseInt(splittedDate[0]),
-          parseInt(splittedDate[1])
-        );
-      } else {
-        parsedDate = new Date();
-      }
+      const parsedDate = parseDateFromURL(date);
       const destinations = searchParams
         .get('destinations')
         ?.split(',');
