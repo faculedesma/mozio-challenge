@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import {
   Cross1Icon,
   TriangleUpIcon
@@ -45,10 +50,14 @@ export const InputDropdown = <
   const [filteredItems, setFilteredItems] = useState<
     string[]
   >([]);
+  const [focusedIndex, setFocusedIndex] =
+    useState<number>(-1);
   const [empty, setEmpty] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] =
     useState<boolean>(false);
+
+  const filteredRefContainer = useRef<HTMLDivElement>(null);
 
   const handleSearch = useCallback(async () => {
     try {
@@ -82,6 +91,14 @@ export const InputDropdown = <
       };
     }
   }, [handleSearch, field.value, error]);
+
+  useEffect(() => {
+    if (!filteredRefContainer.current) return;
+
+    filteredRefContainer.current.scrollIntoView({
+      block: 'center'
+    });
+  }, [focusedIndex]);
 
   const handleInputChange = (value: string) => {
     field.onChange(value);
@@ -130,12 +147,19 @@ export const InputDropdown = <
       );
     }
 
-    return filteredItems?.map((item) => {
+    return filteredItems?.map((item, index) => {
       return (
         <div
           key={item.toString()}
+          ref={
+            index === focusedIndex
+              ? filteredRefContainer
+              : null
+          }
           onClick={() => handleSelectItem(item)}
-          className="flex h-[28px] w-full cursor-pointer items-center justify-start rounded-md p-1 transition-all duration-300 hover:bg-purple-light focus-visible:bg-purple-light focus-visible:outline-none"
+          className={`flex h-[28px] w-full cursor-pointer items-center justify-start rounded-md p-1 transition-all duration-300 hover:bg-purple-light focus-visible:bg-purple-light focus-visible:outline-none ${
+            focusedIndex === index ? 'bg-purple-light' : ''
+          }`}
         >
           {item.toString()}
         </div>
@@ -146,12 +170,44 @@ export const InputDropdown = <
   const removeAutoFocusPopover = (event: Event) =>
     event.preventDefault();
 
+  const handleKeyDownInput: React.KeyboardEventHandler<
+    HTMLInputElement
+  > = (e) => {
+    console.log(filteredItems[focusedIndex]);
+    const { key } = e;
+    let nextIndexCount = 0;
+
+    if (key === 'ArrowDown') {
+      nextIndexCount =
+        (focusedIndex + 1) % filteredItems.length;
+    }
+
+    if (key === 'ArrowUp') {
+      nextIndexCount =
+        (focusedIndex + filteredItems.length - 1) %
+        filteredItems.length;
+    }
+
+    if (key === 'Escape') {
+      setIsOpen(false);
+    }
+
+    if (key === 'Enter') {
+      onSelect && onSelect(filteredItems[focusedIndex]);
+      field.onChange(filteredItems[focusedIndex]);
+    }
+
+    setFocusedIndex(nextIndexCount);
+  };
+
   return (
     <div className="relative flex flex-col items-start justify-start gap-1">
       <Popover.Root open={isOpen}>
         <Popover.Anchor />
         <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
           <input
+            tabIndex={1}
+            onKeyDown={handleKeyDownInput}
             name={field.name}
             value={field.value}
             onChange={(e) =>
