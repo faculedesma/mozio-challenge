@@ -6,13 +6,6 @@ import {
   OpacityIcon
 } from '@radix-ui/react-icons';
 import { Link } from 'react-router-dom';
-
-import { InputDropdown } from '@/components/inputs/InputDropdown';
-import { Button } from '@/components/buttons/Button';
-import { IconButton } from '@/components/buttons/IconButton';
-import { CustomDatePicker } from '@/components/date-picker/CustomDatePicker';
-import { useQueryParam } from '@/hooks/useQueryParams';
-import { travelAPI } from '@/api/TravelAPI';
 import {
   useForm,
   useController,
@@ -21,6 +14,13 @@ import {
   FieldValues,
   Path
 } from 'react-hook-form';
+
+import { InputDropdown } from '@/components/inputs/InputDropdown';
+import { Button } from '@/components/buttons/Button';
+import { IconButton } from '@/components/buttons/IconButton';
+import { CustomDatePicker } from '@/components/date-picker/CustomDatePicker';
+import { useQueryParam } from '@/hooks/useQueryParams';
+import { travelAPI } from '@/api/TravelAPI';
 import { Spinner } from '@/components/loaders/Spinner';
 import { IDestinationsFormValues } from '@/types/form';
 
@@ -163,7 +163,7 @@ const Destinations = ({
   control,
   onRemoveDestination
 }: IDestinationsProps) => {
-  return (
+  return fields.length ? (
     <div className="flex flex-col gap-5">
       {fields.map((field, index) => {
         return (
@@ -178,6 +178,16 @@ const Destinations = ({
           />
         );
       })}
+    </div>
+  ) : (
+    <div className="flex items-center justify-center md:justify-start md:gap-[24px]">
+      <div className="md-w-[32px] h-[188px] w-[0] animate-pulse rounded bg-purple-light"></div>
+      <div className="flex flex-col items-center justify-center gap-[20px] md:w-[324px]">
+        <div className="flex h-[32px] w-[286px] animate-pulse rounded bg-purple-light md:w-[324px]"></div>
+        <div className="flex h-[32px] w-[286px] animate-pulse rounded bg-purple-light md:w-[324px]"></div>
+        <div className="flex h-[32px] w-[286px] animate-pulse rounded bg-purple-light md:w-[324px]"></div>
+        <div className="flex h-[32px] w-[286px] animate-pulse rounded bg-purple-light md:w-[324px]"></div>
+      </div>
     </div>
   );
 };
@@ -232,7 +242,7 @@ const Passengers = <TFieldValues extends FieldValues>({
         >
           <MinusIcon />
         </IconButton>
-        {quantity ? (
+        {field.value ? (
           <input
             type="number"
             className="appearence-none w-[16px] bg-transparent text-center focus-within:outline-none"
@@ -322,9 +332,11 @@ export default function Home() {
     };
 
     if (!initialValues) {
-      const formValues = getDefaultFormValues();
-      setInitialValues(formValues);
-      reset(formValues);
+      setTimeout(() => {
+        const formValues = getDefaultFormValues();
+        setInitialValues(formValues);
+        reset(formValues);
+      }, 300);
     }
   }, [reset, searchParams, initialValues]);
 
@@ -365,7 +377,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex w-[380px] flex-col items-center gap-4 rounded-3xl border border-purple-light bg-blur px-[22px] py-[30px] shadow-purple-lg md:w-[734px] md:px-[86px] md:py-[66px]">
+    <div className="relative flex w-[380px] flex-col items-center gap-4 rounded-3xl border border-purple-light bg-blur px-[22px] py-[30px] shadow-purple-lg md:min-h-[373px] md:min-w-[734px] md:px-[86px] md:py-[66px]">
       <form
         id="destinations-form"
         onSubmit={handleSubmit(() => null)}
@@ -378,43 +390,51 @@ export default function Home() {
               control={control}
               onRemoveDestination={handleRemoveDestination}
             />
-            <div
-              onClick={handleAddDestination}
-              className="group relative left-[48px] flex w-36 cursor-pointer items-center justify-between gap-1"
-            >
-              <div className=" flex h-4 w-4 items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 group-hover:scale-110">
-                <PlusIcon className="stroke-purple-dark" />
+            {initialValues ? (
+              <div
+                onClick={handleAddDestination}
+                className="group relative left-[48px] flex w-36 cursor-pointer items-center justify-between gap-1"
+              >
+                <div className=" flex h-4 w-4 items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 group-hover:scale-110">
+                  <PlusIcon className="stroke-purple-dark" />
+                </div>
+                <span className="text-purple-dark">
+                  Add destination
+                </span>
               </div>
-              <span className="text-purple-dark">
-                Add destination
-              </span>
-            </div>
+            ) : null}
           </div>
           <div className="relative left-[10px] flex w-[236px] justify-between gap-5 self-center md:left-0 md:w-auto md:flex-col md:items-start md:self-start">
             <Passengers
               control={control}
               name="passengers"
             />
-            <CustomDatePicker<IDestinationsFormValues>
-              control={control}
-              name="date"
-              onSelectDate={handleSelectDate}
-            />
+            {initialValues ? (
+              <CustomDatePicker<IDestinationsFormValues>
+                control={control}
+                name="date"
+                onSelectDate={handleSelectDate}
+              />
+            ) : (
+              <div className="relative h-[32px] w-[96px] animate-pulse gap-5 rounded-md border bg-purple-light px-2"></div>
+            )}
           </div>
         </div>
-        <Link
-          to={{
-            pathname: '/results',
-            search: searchParams.toString()
-          }}
-        >
-          <Button
-            label="Submit"
-            type="submit"
-            form="destinations-form"
-            disabled={!isValid}
-          />
-        </Link>
+        {initialValues ? (
+          <Link
+            to={{
+              pathname: '/results',
+              search: searchParams.toString()
+            }}
+          >
+            <Button
+              label="Submit"
+              type="submit"
+              form="destinations-form"
+              disabled={!isValid}
+            />
+          </Link>
+        ) : null}
       </form>
     </div>
   );
