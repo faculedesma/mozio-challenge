@@ -118,12 +118,12 @@ const DestinationInput = ({
   return (
     <div className="relative flex h-[60px] items-start gap-8">
       {isLastDestination ? (
-        <div className="relative top-[24px] flex w-[24px] scale-125 items-center justify-center">
+        <div className="relative top-[32px] flex w-[24px] scale-125 items-center justify-center md:top-[24px]">
           <OpacityIcon className="rotate-180 stroke-0 text-red" />
           <div className="absolute top-1.5 h-1 w-1 rounded-[50%] bg-red"></div>
         </div>
       ) : (
-        <div className="relative top-[24px] flex w-[24px] flex-col items-center gap-[8px]">
+        <div className="relative top-[32px] flex w-[24px] flex-col items-center gap-[8px] md:top-[24px]">
           <div className="h-4 w-4 rounded-[50%] border border-black"></div>
           <div className="h-0.5 w-0.5 rounded-[50%] bg-black"></div>
           <div className="h-0.5 w-0.5 rounded-[50%] bg-black"></div>
@@ -147,7 +147,7 @@ const DestinationInput = ({
           />
           <div
             onClick={() => handleRemoveDestination(index)}
-            className={`flex h-4 w-4 -translate-y-[2px] cursor-pointer ${
+            className={`flex h-4 w-4 translate-y-[2px] cursor-pointer ${
               !isRemovable ? 'border-0' : ''
             } items-center justify-center rounded-[50%] border border-purple-dark transition-all duration-300 hover:scale-90`}
           >
