@@ -192,6 +192,7 @@ export const CustomDatePicker = <
         calendarContainer={CustomContainer}
         renderCustomHeader={CustomHeader}
         fixedHeight
+        disabledKeyboardNavigation
         className={`${error ? 'border border-red' : ''}`}
       />
       {error ? (
