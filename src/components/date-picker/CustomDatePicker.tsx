@@ -194,6 +194,7 @@ export const CustomDatePicker = <
         fixedHeight
         disabledKeyboardNavigation
         className={`${error ? 'border border-red' : ''}`}
+        onFocus={(e) => (e.target.readOnly = true)}
       />
       {error ? (
         <p className="text-red">Select a date</p>
