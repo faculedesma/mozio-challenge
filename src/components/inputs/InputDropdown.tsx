@@ -202,7 +202,7 @@ export const InputDropdown = <
   };
 
   return (
-    <div className="relative flex flex-col items-start justify-start gap-1">
+    <div className="relative flex flex-col items-start justify-start">
       <Popover.Root open={isOpen}>
         <Popover.Anchor />
         <div className="relative flex h-[32px] w-[236px] md:w-[324px]">
@@ -229,7 +229,7 @@ export const InputDropdown = <
           ) : null}
         </div>
         {error ? (
-          <p className="text-red">{error.message}</p>
+          <p className="mt-1 text-red">{error.message}</p>
         ) : null}
         <Popover.Trigger asChild></Popover.Trigger>
         <Popover.Portal>
